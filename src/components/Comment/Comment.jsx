@@ -2,7 +2,11 @@ import { ThumbsUp, Trash } from "phosphor-react";
 import { Avatar } from "../Avatar/Avatar";
 import styles from "./Comment.module.css";
 
-export function Comment() {
+export function Comment({content, deleteComments}) {
+  function hadleDeleteComments() {
+    deleteComments(content)
+  }
+
   return (
     <div className={styles.comment}>
      <Avatar hasBorder={false} src="https://avatars.githubusercontent.com/u/85463497?v=4" />
@@ -19,12 +23,12 @@ export function Comment() {
               </time>
             </div>
 
-            <button title="Deletar comentário">
+            <button onClick={hadleDeleteComments} title="Deletar comentário">
               <Trash size={20} />
             </button>
           </header>
 
-          <p>Muito bom Saulo, parabéns</p>
+          <p>{content}</p>
         </div>
 
         <footer>
