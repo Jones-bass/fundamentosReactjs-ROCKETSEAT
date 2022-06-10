@@ -1,35 +1,46 @@
 import { Avatar } from "../Avatar/Avatar";
 import { Comment } from "../Comment/Comment";
-import styles from "./Post.module.css";
 
-export function Post() {
+import { format } from "date-fns";
+import ptBR from "date-fns/locale/pt-BR";
+
+import styles from "./Post.module.css";
+import { formatDistanceToNow } from "date-fns/esm";
+
+export function Post({ author, publishedAt, content}) {
+  const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
+    locale: ptBR
+  })
+
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true,
+  })
+
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-        <Avatar src="https://avatars.githubusercontent.com/u/85463497?v=4" />
+          <Avatar src={author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <strong>Jones Bass</strong>
-            <span>Web Developer</span>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
           </div>
         </div>
 
-        <time
-          title="11 de junho de 2022 às 21:48h"
-          dataTime="2022-06-08 21:49:30"
-        >
-          Publicado há 1h
+        <time title={publishedDateFormatted} dataTime={publishedAt.toISOString()}>
+          {publishedDateRelativeToNow}
         </time>
       </header>
 
       <div className={styles.content}>
-        <p>Fala galera!</p>
-        <p>
-          <a href="#">Acabei de subir mais um degrau em meus estudos!</a>
-        </p>
-        <p>
-          <a href="#">Jones bass development</a>
-        </p>
+        {content.map(line => {
+          if (line.type === 'paragraph') {
+            return <p>{line.content}</p>;
+          } else if (line.type === 'link') {
+            return <p><a href="#">{line.content}</a></p>
+          }
+        })}
       </div>
 
       <form className={styles.contentForm}>
@@ -40,7 +51,7 @@ export function Post() {
         </footer>
       </form>
       <div className={styles.contentList}>
-        <Comment/>
+        <Comment />
       </div>
     </article>
   );

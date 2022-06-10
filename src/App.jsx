@@ -5,6 +5,37 @@ import { Post } from "./components/Post/Post";
 import styles from './App.module.css';
 import './global.css';
 
+const posts = [
+  {
+    id: 1,
+    author: {
+      avatarUrl: 'https://avatars.githubusercontent.com/u/85463497?v=4',
+      name: 'Jones Bass',
+      role: 'Estudant Web'
+    },
+    content: [
+      { type: 'paragraph', content: 'Fala galera!' },
+      { type: 'paragraph', content: 'Acabei de subir mais um degrau em meus estudos!' },
+      { type: 'paragraph', content: 'Jones bass development' }
+    ],
+    publishedAt: new Date('2022-06-09 20:26:00')
+  },
+  {
+    id: 2,
+    author: {
+      avatarUrl: 'https://avatars.githubusercontent.com/u/85463497?v=4',
+      name: 'Saulo Lorenzo',
+      role: 'Estudant'
+    },
+    content: [
+      { type: 'paragraph', content: 'Fala galera!' },
+      { type: 'paragraph', content: 'Acabei de subir mais um degrau em meus estudos!' },
+      { type: 'paragraph', content: 'Jones bass development' }
+    ],
+    publishedAt: new Date('2022-06-09 20:26:00')
+  },
+]
+
 export function App() {
 
   return (
@@ -14,13 +45,17 @@ export function App() {
       <div className={styles.wrapper}>
         <Sidebar/>
         <main>
-          <Post
-            title="Jones Bass"
-            description="Texto base só para teste de propiedades" />
-
-          <Post
-            title="Bass"
-            description="Mais um texte base só para teste de propiedades" />
+         {posts.map(post => {
+           return (
+           <Post 
+           author={post.author}
+           content={post.content}
+           publishedAt={post.publishedAt}
+           
+           />)
+         
+         
+          })}
         </main>
       </div>
     </div>
