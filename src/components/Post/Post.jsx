@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Avatar } from "../Avatar/Avatar";
-import { Comment } from "../Comment/Comment";
 
+import { formatDistanceToNow } from "date-fns/esm";
 import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 
+import { Avatar } from "../Avatar/Avatar";
+import { Comment } from "../Comment/Comment";
+
 import styles from "./Post.module.css";
-import { formatDistanceToNow } from "date-fns/esm";
 
 export function Post({ author, publishedAt, content }) {
   const [comments, setComments] = useState(["Post TOP"]);
@@ -37,9 +38,14 @@ export function Post({ author, publishedAt, content }) {
     setNewCommentsText(event.target.value)
   }
 
-  function deleteComments(comment){
-    console.log(`Deletar ${comment}`)
+  function deleteComments(commentToDelete){
+    const commentWithonnDeletedOne = comments.filter(comment => {
+      return comment ===! commentToDelete;
+    })
+    setComments(commentWithonnDeletedOne)
   }
+
+  const isNewCommentEmpty = newCommentsText.length ===0;
 
   return (
     <article className={styles.post}>
@@ -52,10 +58,7 @@ export function Post({ author, publishedAt, content }) {
           </div>
         </div>
 
-        <time
-          title={publishedDateFormatted}
-          dataTime={publishedAt.toISOString()}
-        >
+        <time title={publishedDateFormatted} dateTime={publishedAt.toISOString()}>
           {publishedDateRelativeToNow}
         </time>
       </header>
@@ -84,15 +87,19 @@ export function Post({ author, publishedAt, content }) {
         onChange={handleNewCommentsChange}
         />
         <footer>
-          <button type="submit">Publicar</button>
+          <button 
+          type="submit"
+          disabled={isNewCommentEmpty}
+          >Publicar</button>
         </footer>
       </form>
       <div className={styles.contentList}>
         {comments.map((comment) => {
           return <Comment 
           key={comment}
-          deleteComments={deleteComments}
-          content={comment} />;
+          content={comment} 
+          onDeleteComments={deleteComments}
+          />;
         })}
       </div>
     </article>

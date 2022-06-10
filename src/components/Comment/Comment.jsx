@@ -2,9 +2,9 @@ import { ThumbsUp, Trash } from "phosphor-react";
 import { Avatar } from "../Avatar/Avatar";
 import styles from "./Comment.module.css";
 
-export function Comment({content, deleteComments}) {
+export function Comment({content, onDeleteComments}) {
   function hadleDeleteComments() {
-    deleteComments(content)
+    onDeleteComments(content)
   }
 
   return (
