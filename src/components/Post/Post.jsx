@@ -70,7 +70,7 @@ export function Post({ author, publishedAt, content }) {
           } else if (line.type === "link") {
             return (
               <p>
-                <a href="#">{line.content}</a>
+                <a href="/">{line.content}</a>
               </p>
             );
           }
