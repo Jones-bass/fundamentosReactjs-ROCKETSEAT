@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from "react";
 
 import { formatDistanceToNow } from "date-fns/esm";
 import { format } from "date-fns";
@@ -7,17 +7,30 @@ import ptBR from "date-fns/locale/pt-BR";
 import { Avatar } from "../Avatar/Avatar";
 import { Comment } from "../Comment/Comment";
 
-import styles from "./Post.module.css";
+import styles from "./post.module.css";
 
-export function Post({ author, publishedAt, content }) {
+interface Author {
+  name: string;
+  role: string;
+  avatarUrl: string;
+}
+
+interface Content {
+  type: 'paragraph' | 'link';
+  content: string
+}
+
+interface PostProps {
+  author: Author;
+  publishedAt: Date;
+  content: Content[];
+}
+
+export function Post({ author, publishedAt, content }: PostProps) {
   const [comments, setComments] = useState(["Post TOP"]);
   const [newCommentsText, setNewCommentsText] = useState('');
 
-
-  const publishedDateFormatted = format(
-    publishedAt,
-    "d 'de' LLLL 'às' HH:mm'h'",
-    {
+  const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
       locale: ptBR,
     }
   );
@@ -27,25 +40,31 @@ export function Post({ author, publishedAt, content }) {
     addSuffix: true,
   });
 
-  function handleCreateNewComments(event) {
+  function handleCreateNewComments(event: FormEvent) {
     event.preventDefault();
     setComments([...comments, newCommentsText]);
     setNewCommentsText('')
   }
 
 
-  function handleNewCommentsChange(event) {
-    setNewCommentsText(event.target.value)
+  function handleNewCommentsChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    event.target.setCustomValidity('')
+    setNewCommentsText(event.target.value);
   }
 
-  function deleteComments(commentToDelete){
+  function handleNewCommentsInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
+    event.target.setCustomValidity('Esse campo é obrigatório')
+  }
+
+  function deleteComments(commentToDelete: string) {
     const commentWithonnDeletedOne = comments.filter(comment => {
       return comment ===! commentToDelete;
     })
+
     setComments(commentWithonnDeletedOne)
   }
 
-  const isNewCommentEmpty = newCommentsText.length ===0;
+  const isNewCommentEmpty = newCommentsText.length === 0;
 
   return (
     <article className={styles.post}>
@@ -69,8 +88,7 @@ export function Post({ author, publishedAt, content }) {
             return <p key={line.content}>{line.content}</p>;
           } else if (line.type === "link") {
             return (
-              <p>
-                <a href="/">{line.content}</a>
+              <p key={line.content}><a href="#">{line.content}</a>
               </p>
             );
           }
@@ -80,25 +98,25 @@ export function Post({ author, publishedAt, content }) {
       <form onSubmit={handleCreateNewComments} className={styles.contentForm}>
         <strong>Deixe seu feedback</strong>
 
-        <textarea 
-        name="comment" 
-        placeholder="Deixe seu comentário" 
-        value={newCommentsText}
-        onChange={handleNewCommentsChange}
+        <textarea
+          name="comment"
+          placeholder="Deixe seu comentário"
+          value={newCommentsText}
+          onChange={handleNewCommentsChange}
+          onInvalid={handleNewCommentsInvalid}
+          required
         />
         <footer>
-          <button 
-          type="submit"
-          disabled={isNewCommentEmpty}
-          >Publicar</button>
+          <button type="submit" disabled={isNewCommentEmpty}>Publicar</button>
         </footer>
       </form>
+
       <div className={styles.contentList}>
         {comments.map((comment) => {
-          return <Comment 
-          key={comment}
-          content={comment} 
-          onDeleteComments={deleteComments}
+          return <Comment
+            key={comment}
+            content={comment}
+            onDeleteComments={deleteComments}
           />;
         })}
       </div>
